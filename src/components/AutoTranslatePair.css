@@ -1,0 +1,27 @@
+.auto-urdu-hint {
+  font-size: 0.74rem;
+  color: var(--green-700);
+  font-weight: 600;
+}
+
+.auto-urdu-hint--loading {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.auto-urdu-sync {
+  align-self: flex-start;
+  border: 1px solid #c5ddd0;
+  background: var(--green-50);
+  color: var(--green-800);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auto-urdu-sync:hover {
+  background: #d1e7dd;
+}

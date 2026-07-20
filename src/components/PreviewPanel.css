@@ -1,0 +1,225 @@
+.preview-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  min-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #fff 0%, var(--surface-muted) 100%);
+  flex-wrap: wrap;
+}
+
+.preview-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zoom-control input[type='range'] {
+  width: 90px;
+  accent-color: var(--green-700);
+}
+
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  background: var(--green-50);
+}
+
+.preview-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preview-toolbar-left h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.preview-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.preview-badge--ok {
+  color: var(--green-700);
+  background: var(--green-50);
+  border-color: #c5ddd0;
+}
+
+.preview-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.preview-footer p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.preview-footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.preview-footer .btn-outline,
+.preview-footer .btn-primary-soft {
+  padding: 8px 14px;
+  font-size: 0.84rem;
+}
+
+.mobile-view-toggle {
+  display: none;
+  background: #e8efea;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.view-btn.active {
+  background: #fff;
+  color: var(--green-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-stage {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(25, 135, 84, 0.06), transparent 55%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 19px,
+      rgba(15, 81, 50, 0.03) 19px,
+      rgba(15, 81, 50, 0.03) 20px
+    ),
+    #e9f0eb;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.preview-paper-wrap {
+  transform-origin: top center;
+  transition: transform 0.2s ease;
+}
+
+.preview-paper-shadow {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 12px 28px rgba(15, 81, 50, 0.14),
+    0 24px 48px rgba(15, 81, 50, 0.08);
+  border-radius: 2px;
+}
+
+@media (max-width: 960px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-view-toggle {
+    display: flex;
+  }
+
+  .preview-panel {
+    min-height: 520px;
+  }
+
+  .preview-paper-wrap {
+    transform: scale(0.58);
+  }
+}
+
+@media (min-width: 961px) and (max-width: 1200px) {
+  .preview-paper-wrap {
+    transform: scale(0.6);
+  }
+}
+
+@media (min-width: 1201px) and (max-width: 1500px) {
+  .preview-paper-wrap {
+    transform: scale(0.68);
+  }
+}
+
+@media (min-width: 1501px) {
+  .preview-paper-wrap {
+    transform: scale(0.76);
+  }
+}
+
+@media (max-width: 640px) {
+  .preview-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mobile-view-toggle {
+    width: 100%;
+  }
+
+  .view-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .preview-paper-wrap {
+    transform: scale(0.46);
+  }
+}
