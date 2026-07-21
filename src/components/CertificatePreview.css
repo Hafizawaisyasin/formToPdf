@@ -112,46 +112,55 @@
   margin-top: 1px;
 }
 
-.cert-meta-center {
-  flex: 0 0 120px;
-  width: 120px;
-  text-align: center;
-  padding-top: 8px;
+.cert-meta-right {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: right;
+}
+
+.cert-meta-office {
+  display: flex;
+  /* Same right-hugging RTL label pattern used throughout the form. */
+  direction: rtl;
+  justify-content: flex-start;
 }
 
 .cert-office-reg {
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 9.6px;
+  white-space: nowrap;
+  margin-left: 4px;
 }
 
-.cert-office-colon {
+.cert-office-value {
   font-family: Calibri, Arial, sans-serif;
-  font-size: 7.3px;
-  margin-left: 2px;
+  font-size: 8.2px;
+  font-weight: 400;
 }
 
-.cert-meta-right {
-  text-align: right;
-}
-
+/* The reference certificate does NOT draw a full-width bordered bar for
+   section headers. Instead each header is a small, centered "tab" box
+   that floats in the gap between the previous section's body and the
+   next one (with the surrounding row otherwise empty/unbordered), and
+   the body below it is the only thing with a full-width border. */
 .cert-section {
   position: relative;
   z-index: 1;
   margin: 0 14px;
-  border: 1px solid #000;
-}
-
-.cert-section + .cert-section {
-  border-top: none;
 }
 
 .cert-section-header {
   display: flex;
-  background: #d9d9d9;
-  border-bottom: 1px solid #000;
-  min-height: 18px;
-  align-items: center;
+  justify-content: center;
+  min-height: 19px;
+  align-items: stretch;
+}
+
+.cert-section-title-box {
+  display: flex;
+  width: 42%;
+  border: 1px solid #000;
 }
 
 .cert-section-title-en {
@@ -161,6 +170,7 @@
   font-weight: 700;
   font-size: 8.8px;
   padding: 2px 8px;
+  text-align: center;
 }
 
 .cert-section-title-ur {
@@ -169,24 +179,26 @@
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 10.5px;
-  text-align: right;
+  text-align: center;
   padding: 2px 8px;
   direction: rtl;
+  border-left: 1px solid #000;
 }
 
 .cert-section-body {
+  border: 1px solid #000;
   font-size: 7.3px;
 }
 
 .cert-row {
+  /* The reference has no horizontal divider between individual fields —
+     each section body is one open box with generously spaced rows, not
+     a grid. The vertical English/Urdu divider still reads as one
+     continuous line because every row's border-left lines up exactly
+     (see .cert-row-ur below). */
   display: flex;
-  border-bottom: 1px solid #000;
-  min-height: 15px;
+  min-height: 17px;
   align-items: center;
-}
-
-.cert-row:last-child {
-  border-bottom: none;
 }
 
 .cert-row-en,
@@ -194,7 +206,7 @@
   flex: 1 1 0;
   display: flex;
   align-items: center;
-  min-height: 15px;
+  min-height: 17px;
   padding: 1px 6px;
   min-width: 0;
   overflow: hidden;
@@ -202,7 +214,12 @@
 
 .cert-row-ur {
   border-left: 1px solid #000;
-  justify-content: flex-end;
+  /* In a `direction: rtl` row, main-start is the RIGHT edge, so
+     flex-start packs content there — matching the reference, where the
+     label sits right against the outer edge and the value trails off
+     toward the divider. flex-end would do the opposite (hug the
+     divider, leaving a gap at the outer edge). */
+  justify-content: flex-start;
   direction: rtl;
   text-align: right;
 }
@@ -218,7 +235,13 @@
      explicit fixes it for html2canvas without changing anything visible
      in a real browser.
   */
+  /* Fixed width instead of sizing to each label's own text — this is
+     what makes every value line up in a straight column regardless of
+     whether the label is "Name :" or "Grand Father's Name :", matching
+     the reference. */
   display: inline-block;
+  width: 82px;
+  flex: 0 0 82px;
   font-family: Calibri, Arial, sans-serif;
   font-size: 7.3px;
   white-space: nowrap;
@@ -245,12 +268,24 @@
 }
 
 .cert-label-ur {
-  margin-right: 6px;
+  /* Same fixed-column idea as .cert-label-en, mirrored: a fixed width
+     (text-align: right, inherited from .cert-row-ur) keeps every label
+     flush against the outer edge and every value starting at the same
+     distance from it, instead of drifting based on label length. */
+  width: 92px;
+  flex: 0 0 92px;
+  /* Label now comes first in DOM (rightmost in the RTL row), so the gap
+     to the value that follows it goes on the label's LEFT side. */
+  margin-left: 6px;
   white-space: nowrap;
 }
 
-.cert-value-ur {
-  margin-left: 4px;
+.cert-value-ltr {
+  /* Isolates a Latin/numeric value (e.g. "10-Sep-2025") from the
+     surrounding RTL context so the browser's bidi algorithm can't
+     reorder its hyphen-separated segments. */
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .cert-urdu-typesetting {
@@ -268,28 +303,50 @@
   font-size: 9.6px;
 }
 
-.cert-row-split .cert-row-en,
-.cert-row-split .cert-row-ur {
-  border-left: none;
+/* Gender + Religion share the normal 50/50 cert-row-en/cert-row-ur split
+   (see CertificatePreview.jsx) so the English/Urdu divider stays at the
+   same x position as every other row. Gender's LABEL deliberately keeps
+   the same fixed width as every other label in the form (82px/92px,
+   inherited from .cert-label-en/.cert-label-ur — no override here) so
+   "Male"/"Female" lines up in the exact same column as "Muhammad
+   Hussain", "10-Sep-2025", etc. Only Gender's VALUE gets a small fixed
+   width, which is what keeps Religion's column starting at a
+   consistent spot regardless of whether the value is "Male" or
+   "Female". */
+.cert-row-split .split-gender-value-en {
+  flex: 0 0 40px;
+  width: 40px;
 }
 
-.cert-row-split .split-left {
-  flex: 0 0 34%;
+.cert-row-split .split-gap-en {
+  /* Religion's own column: label then value, with a clear gap after
+     Gender's fixed-width value so it still reads as a separate field. */
+  flex: 0 0 auto;
+  width: auto;
+  margin-left: 24px;
 }
 
-.cert-row-split .split-middle {
-  flex: 0 0 28%;
-  border-left: 1px solid #000;
+.cert-row-split .split-value-en {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
 }
 
-.cert-row-split .split-right {
-  flex: 0 0 38%;
-  border-left: 1px solid #000;
-  gap: 8px;
+.cert-row-split .split-gender-value-ur {
+  flex: 0 0 42px;
+  width: 42px;
 }
 
-.gender-ur {
-  margin-right: 12px;
+.cert-row-split .split-gap-ur {
+  flex: 0 0 auto;
+  width: auto;
+  margin-right: 24px;
+}
+
+.cert-row-split .split-value-ur {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
 }
 
 .district-row .cert-label-ur {
@@ -311,15 +368,11 @@
 }
 
 .cert-footer-rows {
+  /* No border box around Entry/Issue Date + Entry Status in the
+     reference — they're plain rows below the last section. */
   position: relative;
   z-index: 1;
   margin: 0 14px;
-  border: 1px solid #000;
-  border-top: none;
-}
-
-.cert-footer-rows .cert-row:last-child {
-  border-bottom: none;
 }
 
 .cert-bottom {
@@ -332,10 +385,7 @@
 }
 
 .cert-signature-block {
-  /* Matches the old "1fr 90px 1fr" grid: this block gets 2 of the 3
-     equal shares of the space left after the fixed 90px QR column,
-     leaving the last share empty on the right, same as before. */
-  flex: 0 0 calc((100% - 90px) * 2 / 3);
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -365,7 +415,13 @@
 }
 
 .cert-qr {
-  flex: 0 0 90px;
+  /* Centered on the full page width (matches the reference), not just
+     the space left over next to the signature block — independent of
+     how wide the signature text happens to be. */
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
   width: 90px;
   display: flex;
   justify-content: center;
