@@ -43,11 +43,13 @@ const CertificatePreview = forwardRef(function CertificatePreview({ data }, ref)
       />
 
       <header className="cert-header">
-        <img
-          src="/assets/extracted_img_1.png"
-          alt="Government of Punjab"
-          className="cert-logo"
-        />
+        <div className="cert-logo-slot">
+          <img
+            src="/assets/extracted_img_1.png"
+            alt="Government of Punjab"
+            className="cert-logo"
+          />
+        </div>
 
         <div className="cert-titles">
           <div className="cert-title-ur">حکومت پنجاب پاکستان</div>

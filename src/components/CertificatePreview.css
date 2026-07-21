@@ -26,11 +26,15 @@
 .cert-header {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 90px 1fr 150px;
-  align-items: start;
+  display: flex;
+  align-items: flex-start;
   padding: 8px 12px 0;
   min-height: 92px;
+}
+
+.cert-logo-slot {
+  flex: 0 0 90px;
+  width: 90px;
 }
 
 .cert-logo {
@@ -40,6 +44,8 @@
 }
 
 .cert-titles {
+  flex: 1 1 auto;
+  min-width: 0;
   text-align: center;
   padding-top: 2px;
 }
@@ -75,6 +81,8 @@
 }
 
 .cert-barcode-wrap {
+  flex: 0 0 150px;
+  width: 150px;
   display: flex;
   justify-content: flex-end;
   padding-top: 2px;
@@ -88,12 +96,16 @@
 .cert-meta {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 120px 1fr;
+  display: flex;
   font-family: Calibri, Arial, sans-serif;
   font-size: 8.2px;
   padding: 2px 18px 4px;
   line-height: 1.35;
+}
+
+.cert-meta-left {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .cert-meta-left div + div {
@@ -101,6 +113,8 @@
 }
 
 .cert-meta-center {
+  flex: 0 0 120px;
+  width: 120px;
   text-align: center;
   padding-top: 8px;
 }
@@ -133,8 +147,7 @@
 }
 
 .cert-section-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   background: #d9d9d9;
   border-bottom: 1px solid #000;
   min-height: 18px;
@@ -142,6 +155,8 @@
 }
 
 .cert-section-title-en {
+  flex: 1 1 0;
+  min-width: 0;
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 8.8px;
@@ -149,6 +164,8 @@
 }
 
 .cert-section-title-ur {
+  flex: 1 1 0;
+  min-width: 0;
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 10.5px;
@@ -162,8 +179,7 @@
 }
 
 .cert-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   border-bottom: 1px solid #000;
   min-height: 15px;
   align-items: center;
@@ -175,10 +191,13 @@
 
 .cert-row-en,
 .cert-row-ur {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
   min-height: 15px;
   padding: 1px 6px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .cert-row-ur {
@@ -189,6 +208,17 @@
 }
 
 .cert-label-en {
+  /* These are <span> elements, so they're inline by default. As direct
+     children of a `display: flex` row they get auto-"blockified" by the
+     spec, and real browsers (Print, live preview) honor that and apply
+     margin-right correctly. html2canvas's own layout engine doesn't
+     reliably detect that implicit blockification and can treat them as
+     plain inline text instead, dropping the margin between label and
+     value — the exact "NameMuhammadHussain" squish. Making the box type
+     explicit fixes it for html2canvas without changing anything visible
+     in a real browser.
+  */
+  display: inline-block;
   font-family: Calibri, Arial, sans-serif;
   font-size: 7.3px;
   white-space: nowrap;
@@ -196,13 +226,19 @@
 }
 
 .cert-value-en {
+  display: inline-block;
   font-family: Calibri, Arial, sans-serif;
   font-size: 7.3px;
   flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cert-value-ur,
 .cert-label-ur {
+  display: inline-block;
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 9.6px;
@@ -232,20 +268,22 @@
   font-size: 9.6px;
 }
 
-.cert-row-split {
-  grid-template-columns: 34% 28% 38%;
-}
-
 .cert-row-split .cert-row-en,
 .cert-row-split .cert-row-ur {
   border-left: none;
 }
 
+.cert-row-split .split-left {
+  flex: 0 0 34%;
+}
+
 .cert-row-split .split-middle {
+  flex: 0 0 28%;
   border-left: 1px solid #000;
 }
 
 .cert-row-split .split-right {
+  flex: 0 0 38%;
   border-left: 1px solid #000;
   gap: 8px;
 }
@@ -287,15 +325,18 @@
 .cert-bottom {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 90px 1fr;
-  align-items: end;
+  display: flex;
+  align-items: flex-end;
   padding: 8px 20px 16px;
   min-height: 110px;
 }
 
 .cert-signature-block {
-  grid-column: 1;
+  /* Matches the old "1fr 90px 1fr" grid: this block gets 2 of the 3
+     equal shares of the space left after the fixed 90px QR column,
+     leaving the last share empty on the right, same as before. */
+  flex: 0 0 calc((100% - 90px) * 2 / 3);
+  min-width: 0;
 }
 
 .cert-signature-line {
@@ -324,17 +365,33 @@
 }
 
 .cert-qr {
-  grid-column: 2;
+  flex: 0 0 90px;
+  width: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 @media print {
+  /* The certificate is authored at 612x792 CSS px, but a US Letter page
+     is 816x1056 CSS px (8.5in x 11in @ 96dpi) — a straight px vs pt unit
+     mix-up. Downloaded PDFs don't show it because jsPDF stretches the
+     rasterized image to fill the true 612pt x 792pt page, but native
+     print has no such rescaling step, so the certificate prints smaller
+     than the page. Scale it up (612 -> 816 is exactly 4/3) so print
+     fills the full page width/height instead of leaving a margin. */
+  html,
+  body {
+    width: 8.5in;
+    height: 11in;
+  }
+
   .certificate-page {
     border: none;
     box-shadow: none;
     margin: 0;
     page-break-after: avoid;
+    transform: scale(1.33333333);
+    transform-origin: top left;
   }
 }

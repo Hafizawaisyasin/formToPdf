@@ -6,6 +6,7 @@ import WelcomeBanner from './components/WelcomeBanner';
 import PreviewPanel from './components/PreviewPanel';
 import { defaultCertificateData } from './data/defaultCertificate';
 import { getWelcomeName, isAuthenticated, logout } from './utils/auth';
+import { ensureFontsReady } from './utils/fonts';
 import { downloadCertificatePdf } from './utils/pdfExport';
 import { clearSavedData, loadSavedData, saveData } from './utils/storage';
 import { canExport, getMissingRequiredFields } from './utils/validation';
@@ -88,6 +89,10 @@ function CertificateApp({ welcomeName, freshLogin, onFreshLoginHandled, onLogout
       @page { size: letter portrait; margin: 0; }
       @media print { html, body { margin: 0; padding: 0; } }
     `,
+    // Make sure the Noto Nastaliq Urdu webfont is fully loaded before the
+    // print iframe is built — otherwise the print output can render with
+    // fallback-font metrics and the Urdu/English columns overlap.
+    onBeforePrint: ensureFontsReady,
     onAfterPrint: () => showToast('Print dialog opened'),
   });
 
